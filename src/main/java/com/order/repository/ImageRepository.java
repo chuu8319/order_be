@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
     Optional<Image> findByRestaurantId(Long restaurantId);
+    void deleteByRestaurantId(Long id);
 }

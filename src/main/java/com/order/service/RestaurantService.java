@@ -35,8 +35,9 @@ public class RestaurantService {
             RestaurantResponseDto restaurantResponseDto = new RestaurantResponseDto();
 
             restaurantResponseDto.setRestaurantId(restaurant.getId());
-            restaurantResponseDto.setRestaurantCategory(restaurant.getRestaurantCategory());
             restaurantResponseDto.setRestaurantName(restaurant.getRestaurantName());
+            restaurantResponseDto.setRestaurantCategory(restaurant.getRestaurantCategory());
+            restaurantResponseDto.setRestaurantPhone(restaurant.getRestaurantPhone());
             restaurantResponseDto.setRestaurantAddress(restaurant.getRestaurantAddress());
 
             images.stream()
@@ -95,6 +96,7 @@ public class RestaurantService {
         RestaurantResponseDto restaurantResponseDto = new RestaurantResponseDto();
         restaurantResponseDto.setRestaurantId(restaurant.getId());
         restaurantResponseDto.setRestaurantCategory(restaurant.getRestaurantCategory());
+        restaurantResponseDto.setRestaurantPhone(restaurant.getRestaurantPhone());
         restaurantResponseDto.setRestaurantName(restaurant.getRestaurantName());
         restaurantResponseDto.setRestaurantAddress(restaurant.getRestaurantAddress());
 
@@ -151,5 +153,35 @@ public class RestaurantService {
         restaurantRepository.save(savedRestaurant);
 
         return savedRestaurant.toDto();
+    }
+
+    public RestaurantDto updateRestaurant(Long id, RestaurantDto restaurantDto, MultipartFile file) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("데이터가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        restaurant.setRestaurantName(restaurantDto.getRestaurantName());
+        restaurant.setRestaurantCategory(restaurantDto.getRestaurantCategory());
+        restaurant.setRestaurantPhone(restaurantDto.getRestaurantPhone());
+        restaurant.setRestaurantAddress(restaurantDto.getRestaurantAddress());
+
+        if(file != null) {
+            long imageId = imageService.addImage(restaurant, file);
+            restaurant.setRestaurantImageId(imageId);
+        } else {
+            restaurant.setRestaurantImageId(null);
+        }
+
+        restaurantRepository.save(restaurant);
+
+        return restaurant.toDto();
+    }
+
+    public void deleteRestaurant(Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("데이터가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        menuRepository.deleteByRestaurantId(restaurant.getId());
+        imageRepository.deleteByRestaurantId(restaurant.getId());
+        restaurantRepository.delete(restaurant);
     }
 }
