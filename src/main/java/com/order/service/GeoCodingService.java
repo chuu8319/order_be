@@ -1,9 +1,12 @@
 package com.order.service;
 
+import com.order.dto.AddressResponseDto;
 import com.order.entity.Address;
+import com.order.entity.Image;
 import com.order.entity.Restaurant;
 import com.order.exception.ResourceNotFoundException;
 import com.order.repository.AddressRepository;
+import com.order.repository.ImageRepository;
 import com.order.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
@@ -13,12 +16,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class GeoCodingService {
     private final RestaurantRepository restaurantRepository;
     private final AddressRepository addressRepository;
+    private final ImageRepository imageRepository;
 
     @Value("${NAVER_GEOCODE_URL}")
     String NAVER_GEOCODE_URL;
@@ -63,5 +70,30 @@ public class GeoCodingService {
         addressRepository.save(newAddress);
 
         return response.getBody();
+    }
+
+    public List<AddressResponseDto> getAllAddress() {
+        List<Address> addressList = addressRepository.findAll();
+        List<Image> images = imageRepository.findAll();
+
+        List<AddressResponseDto> addressResponseDtoList = new ArrayList<>();
+
+        for(Address address : addressList) {
+            AddressResponseDto addressResponseDto = new AddressResponseDto();
+            addressResponseDto.setId(address.getId());
+            addressResponseDto.setX(address.getX());
+            addressResponseDto.setY(address.getY());
+            addressResponseDto.setRestaurantId(address.getRestaurant().getId());
+            addressResponseDto.setRestaurantName(address.getRestaurant().getRestaurantName());
+            addressResponseDto.setRestaurantCategory(address.getRestaurant().getRestaurantCategory());
+            addressResponseDto.setRestaurantAddress(address.getRestaurant().getRestaurantAddress());
+            addressResponseDto.setRestaurantPhone(address.getRestaurant().getRestaurantPhone());
+            images.stream()
+                    .filter(image -> image.getRestaurant().getId().equals(address.getRestaurant().getId()))
+                    .findFirst().ifPresent(matchingImage -> addressResponseDto.setRestaurantStoredFilePath(matchingImage.getStoredFilePath()));
+            addressResponseDtoList.add(addressResponseDto);
+        }
+
+        return addressResponseDtoList;
     }
 }

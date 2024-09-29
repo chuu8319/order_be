@@ -1,9 +1,9 @@
 package com.order.controller;
 
+import com.order.dto.AddressResponseDto;
 import com.order.dto.RestaurantDetailResponseDto;
 import com.order.dto.RestaurantDto;
 import com.order.dto.RestaurantResponseDto;
-import com.order.repository.RestaurantRepository;
 import com.order.service.GeoCodingService;
 import com.order.service.RestaurantService;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,6 @@ import java.util.List;
 @RequestMapping("/restaurant")
 public class RestaurantController {
     private RestaurantService restaurantService;
-    private final RestaurantRepository restaurantRepository;
     private final GeoCodingService geoCodingService;
 
     @GetMapping
@@ -64,11 +63,4 @@ public class RestaurantController {
         restaurantService.deleteRestaurant(id);
         return ResponseEntity.ok("Delete successfully");
     }
-
-    @PostMapping("/{id}")
-    public String getCoordinates(@PathVariable(value = "id") Long id) {
-        return geoCodingService.getCoordinates(id);
-    }
-
-
 }
