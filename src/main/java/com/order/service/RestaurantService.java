@@ -24,6 +24,7 @@ public class RestaurantService {
     private final ReviewRepository reviewRepository;
     private final MenuRepository menuRepository;
     private final ImageService imageService;
+    private final GeoCodingService geoCodingService;
 
     public List<RestaurantResponseDto> getAllRestaurant() {
         List<Restaurant> restaurants = restaurantRepository.findAll();

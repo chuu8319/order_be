@@ -19,7 +19,6 @@ public class UserController {
         if(id == -1) {
             return ResponseEntity.badRequest().body("이미 존재하는 회원입니다.");
         }
-        return ResponseEntity.ok("userId: "+id);
+        return ResponseEntity.ok("Id: "+id);
     }
-
 }

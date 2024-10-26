@@ -17,6 +17,8 @@ public class RestaurantDto {
     private String restaurantPhone;
     private String restaurantAddress;
     private Long restaurantImageId;
+    private Long restaurantOwner;
+
 
     // DTO에서 엔티티로 변환하는 메서드
     public Restaurant toEntity() {
@@ -27,6 +29,7 @@ public class RestaurantDto {
                 .restaurantPhone(this.restaurantPhone)
                 .restaurantAddress(this.restaurantAddress)
                 .restaurantImageId(this.restaurantImageId)
+                .restaurantOwner(this.restaurantOwner)
                 .build();
     }
 }
