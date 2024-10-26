@@ -1,6 +1,5 @@
 package com.order.controller;
 
-import com.order.dto.AddressResponseDto;
 import com.order.dto.RestaurantDetailResponseDto;
 import com.order.dto.RestaurantDto;
 import com.order.dto.RestaurantResponseDto;
@@ -18,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/restaurant")
 public class RestaurantController {
-    private RestaurantService restaurantService;
+    private final RestaurantService restaurantService;
     private final GeoCodingService geoCodingService;
 
     @GetMapping
