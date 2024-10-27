@@ -44,7 +44,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(List.of("Authorization", "Id"));
@@ -68,7 +68,7 @@ public class SecurityConfiguration {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/join").permitAll()
+                .requestMatchers("/login", "/join", "/restaurant", "/address").permitAll()
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated());
 
