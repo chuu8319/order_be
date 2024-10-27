@@ -26,7 +26,6 @@ public class UserService {
         user.setUserPhone(joinDto.getUserPhone());
         user.setUserEmail(joinDto.getUserEmail());
         user.setUserType(joinDto.getUserType());
-        //Todo: Role에 맞게 수정
         user.setRole("ROLE_USER");
 
         User savedUser = userRepository.save(user);

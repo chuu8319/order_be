@@ -3,7 +3,6 @@ package com.order.jwt;
 import com.order.entity.User;
 import com.order.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

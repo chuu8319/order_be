@@ -153,6 +153,8 @@ public class RestaurantService {
 
         restaurantRepository.save(savedRestaurant);
 
+        geoCodingService.getCoordinates(savedRestaurant.getId());
+
         return savedRestaurant.toDto();
     }
 
