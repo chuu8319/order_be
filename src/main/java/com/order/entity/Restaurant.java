@@ -34,8 +34,9 @@ public class Restaurant {
     @Column(name = "restaurant_image_id")
     private Long restaurantImageId;
 
-    @Column(name = "restaurant_owner")
-    private Long restaurantOwner;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     // DTO를 엔티티로 변환하는 정적 메서드
     public RestaurantDto toDto() {
@@ -46,7 +47,7 @@ public class Restaurant {
                 .restaurantPhone(this.getRestaurantPhone())
                 .restaurantAddress(this.getRestaurantAddress())
                 .restaurantImageId(this.getRestaurantImageId())
-                .restaurantOwner(this.getRestaurantOwner())
+                .userId(this.getUser().getId())
                 .build();
     }
 }
