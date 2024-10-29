@@ -21,7 +21,7 @@ public class AddressController {
         return ResponseEntity.ok(address);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> getAllAddress() {
         List<AddressResponseDto> addressResponseDtoList = geoCodingService.getAllAddress();
         return ResponseEntity.ok(addressResponseDtoList);

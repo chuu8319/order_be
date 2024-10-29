@@ -3,6 +3,7 @@ package com.order.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.order.dto.RestaurantDto;
 import jakarta.persistence.*;
+import jakarta.websocket.ClientEndpoint;
 import lombok.*;
 
 @Entity
@@ -33,6 +34,10 @@ public class Restaurant {
     @Column(name = "restaurant_image_id")
     private Long restaurantImageId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     // DTO를 엔티티로 변환하는 정적 메서드
     public RestaurantDto toDto() {
         return RestaurantDto.builder()
@@ -42,6 +47,7 @@ public class Restaurant {
                 .restaurantPhone(this.getRestaurantPhone())
                 .restaurantAddress(this.getRestaurantAddress())
                 .restaurantImageId(this.getRestaurantImageId())
+                .userId(this.getUser().getId())
                 .build();
     }
 }

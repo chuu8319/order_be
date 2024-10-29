@@ -5,26 +5,30 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "review")
+@Table(name = "cart")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Review {
-
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "review_contents")
-    private String reviewContents;
-
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
     private Restaurant restaurant;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id", referencedColumnName = "id")
+    private Menu menu;
+
+    @Column(name = "count")
+    private Long count;
 }
