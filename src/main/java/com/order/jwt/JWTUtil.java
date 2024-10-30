@@ -1,5 +1,7 @@
 package com.order.jwt;
 
+import com.order.entity.User;
+import com.order.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,16 +15,23 @@ import java.util.Date;
 public class JWTUtil {
 
     private SecretKey secretKey;
+    private final UserRepository userRepository;
 
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
+    public JWTUtil(@Value("${spring.jwt.secret}")String secret,
+                   UserRepository userRepository) {
 
 
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+        this.userRepository = userRepository;
     }
 
     public String getUsername(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    }
+    public User getUser(String token) {
+        String username = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+        return userRepository.findByUserId(username);
     }
 
     public String getRole(String token) {
