@@ -29,6 +29,9 @@ public class Cart {
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
     private Menu menu;
 
+    @Column(name = "price")
+    private Long price;
+
     @Column(name = "count")
-    private Long count;
+    private int count;
 }
