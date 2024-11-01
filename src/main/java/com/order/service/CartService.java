@@ -99,6 +99,9 @@ public class CartService {
         existingCartItem.setPrice(menuPrise * existingCartItem.getCount());
         Cart savedCart = cartRepository.save(existingCartItem);
         return savedCart.getId();
+    }
 
+    public List<Cart> getAllCart(Long id) {
+        return cartRepository.findByUserId(id);
     }
 }
