@@ -104,4 +104,18 @@ public class CartService {
     public List<Cart> getAllCart(Long id) {
         return cartRepository.findByUserId(id);
     }
+
+    public long removeFromCart(Long userId, Long menuId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("유효하지 않은 사용자 ID입니다."));
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 메뉴 ID입니다."));
+
+        Cart existingCartItem = cartRepository.findByUserIdAndMenuId(userId, menuId);
+        if (existingCartItem == null) {
+            return -1;
+        }
+        cartRepository.deleteById(existingCartItem.getId());
+        return existingCartItem.getId();
+    }
 }
