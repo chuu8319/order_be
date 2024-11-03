@@ -29,9 +29,18 @@ public class CartController {
     public ResponseEntity<?> getAllCart(@AuthUser User user) {
        List<Cart> allCart = cartService.getAllCart(user.getId());
        if(allCart == null) {
-           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("장바구니가 비었습니다.");
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart is Empty");
        }
        return ResponseEntity.ok(allCart);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> removeFromCart(@AuthUser User user, @PathVariable("id") Long menuId) {
+        long cartItem = cartService.removeFromCart(user.getId(), menuId);
+        if(cartItem == -1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart is Empty");
+        }
+        return ResponseEntity.ok(cartItem);
     }
 
     @PostMapping("/add/{id}")
