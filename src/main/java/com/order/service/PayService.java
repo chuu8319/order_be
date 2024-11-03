@@ -60,6 +60,7 @@ public class PayService {
                 payMenu.setCount(cartItem.getCount());
                 payMenu.setPay(payEntity);
                 payMenuRepository.save(payMenu);
+                cartRepository.delete(cartItem);
             }
         }
         return response;
