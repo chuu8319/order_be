@@ -28,6 +28,7 @@ public class PayService {
 
     // 결제 검증 및 DB 저장 메서드 추가
     public IamportResponse<Payment> verifyAndSavePayment(User user, String impUid) throws IamportResponseException, IOException {
+        log.info("userId:" + user.getId());
         IamportResponse<Payment> response = iamportClient.paymentByImpUid(impUid);
 
         Payment payment = response.getResponse();
