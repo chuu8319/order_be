@@ -86,7 +86,7 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public RestaurantDetailResponseDto getRestaurantById(Long id) {
+    public RestaurantDetailResponseDto getRestaurantById(User user, Long id) {
         RestaurantDetailResponseDto restaurantDetailResponseDto = new RestaurantDetailResponseDto();
 
         // 레스토랑 데이터 조회
@@ -129,10 +129,14 @@ public class RestaurantService {
         } else {
             restaurantDetailResponseDto.setReviewResponseDtoList(reviews.stream()
                     .map(review -> {
+                        boolean isUser;
+                        isUser = review.getUser() == user;
                         ReviewResponseDto reviewResponseDto = new ReviewResponseDto();
                         reviewResponseDto.setReviewContents(review.getReviewContents());
-                        //TODO User 설계 된 후 수정
-                        reviewResponseDto.setUserName(review.getUserId());
+                        reviewResponseDto.setRating(review.getRating());
+                        reviewResponseDto.setUserName(review.getUser().getUserName());
+                        reviewResponseDto.setUser(isUser);
+                        reviewResponseDto.setReviewId(review.getId());
                         return reviewResponseDto;
                     }).collect(Collectors.toList()));
         }
@@ -186,5 +190,6 @@ public class RestaurantService {
         menuRepository.deleteByRestaurantId(restaurant.getId());
         imageRepository.deleteByRestaurantId(restaurant.getId());
         restaurantRepository.delete(restaurant);
+        reviewRepository.deleteByRestaurantId(restaurant.getId());
     }
 }

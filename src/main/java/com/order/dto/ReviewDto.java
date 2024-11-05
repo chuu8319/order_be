@@ -1,5 +1,6 @@
 package com.order.dto;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,10 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewResponseDto {
+public class ReviewDto {
     private String reviewContents;
     private int rating;
-    private String userName;
-    private boolean isUser;
-    private Long reviewId;
+    private String restaurantName;
 }
