@@ -1,5 +1,7 @@
 package com.order.service;
 
+import com.order.dto.CartMenuDto;
+import com.order.dto.ReCartDto;
 import com.order.entity.Cart;
 import com.order.entity.Menu;
 import com.order.entity.Restaurant;
@@ -117,5 +119,22 @@ public class CartService {
         }
         cartRepository.deleteById(existingCartItem.getId());
         return existingCartItem.getId();
+    }
+
+    public ReCartDto reCart(User user, ReCartDto reCartDto) {
+        for (CartMenuDto menuDto : reCartDto.getMenuDtoList()) {
+            Menu menu = menuRepository.findByMenuName(menuDto.getMenu());
+
+            Cart cart = Cart.builder()
+                    .user(user)
+                    .restaurant(menu.getRestaurant())
+                    .menu(menu)
+                    .price(menuDto.getPrice()* menuDto.getCount())
+                    .count(menuDto.getCount())
+                    .build();
+            cartRepository.save(cart);
+            reCartDto.setRestaurantName(cart.getRestaurant().getRestaurantName());
+        }
+        return reCartDto;
     }
 }

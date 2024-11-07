@@ -1,6 +1,8 @@
 package com.order.controller;
 
 import com.order.common.AuthUser;
+import com.order.dto.PayResponseDto;
+import com.order.dto.ReCartDto;
 import com.order.entity.Cart;
 import com.order.entity.User;
 import com.order.service.CartService;
@@ -58,5 +60,17 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart is Empty");
         }
         return ResponseEntity.ok(cartItem);
+    }
+
+    @PostMapping("/re")
+    public ResponseEntity<?> makeCart(@AuthUser User user, @RequestPart("Data")ReCartDto reCartDto) {
+        ReCartDto reCart = cartService.reCart(user, reCartDto);
+        PayResponseDto payResponseDto = new PayResponseDto();
+        payResponseDto.setAmount(reCart.getTotal());
+        payResponseDto.setName(reCart.getRestaurantName());
+        payResponseDto.setBuyer_name(user.getUserName());
+        payResponseDto.setBuyer_email(user.getUserEmail());
+        payResponseDto.setBuyer_tel(user.getUserPhone());
+        return ResponseEntity.ok(payResponseDto);
     }
 }
