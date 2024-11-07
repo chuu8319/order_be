@@ -23,6 +23,12 @@ public class ReviewController {
         return ResponseEntity.ok("reviewId: " + reviewId);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAllByRestaurant(@PathVariable("id") long id) {
+        List<ReviewDto> reviewDto = reviewService.getAllByRestaurant(id);
+        return ResponseEntity.ok(reviewDto);
+    }
+
     @GetMapping()
     public ResponseEntity<?> getAllByUser(@AuthUser User user) {
         List<ReviewDto> reviewDto = reviewService.getAllByUser(user);

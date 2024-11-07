@@ -29,7 +29,7 @@ public class ReviewService {
 
         Review review = new Review();
         review.setReviewContents(reviewDto.getReviewContents());
-        review.setRating(review.getRating());
+        review.setRating(reviewDto.getRating());
         review.setUser(user);
         review.setRestaurant(restaurant);
         Review savedReview = reviewRepository.save(review);
@@ -76,5 +76,21 @@ public class ReviewService {
 
         restaurantRepository.deleteById(id);
         return review.getId();
+    }
+
+    public List<ReviewDto> getAllByRestaurant(long id) {
+        List<Review> reviews = reviewRepository.findByRestaurantId(id);
+        if (reviews == null || reviews.isEmpty()) {
+            throw new ResourceNotFoundException("No reviews found for restaurant with ID: " + id, HttpStatus.NOT_FOUND);
+        }
+        List<ReviewDto> reviewDtoList = new ArrayList<>();
+        for (Review review : reviews) {
+            ReviewDto reviewDto = new ReviewDto();
+            reviewDto.setReviewContents(review.getReviewContents());
+            reviewDto.setRating(review.getRating());
+            reviewDto.setRestaurantName(review.getRestaurant().getRestaurantName());
+            reviewDtoList.add(reviewDto);
+        }
+        return reviewDtoList;
     }
 }
