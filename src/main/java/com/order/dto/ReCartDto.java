@@ -12,5 +12,5 @@ import java.util.List;
 public class ReCartDto {
     private List<CartMenuDto> menuDtoList;
     private Long total;
-    private String restaurantName;
+    private Long restaurantId;
 }

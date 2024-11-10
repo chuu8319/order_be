@@ -1,6 +1,7 @@
 package com.order.service;
 
 import com.order.dto.CartMenuDto;
+import com.order.dto.PayResponseDto;
 import com.order.dto.ReCartDto;
 import com.order.entity.Cart;
 import com.order.entity.Menu;
@@ -121,9 +122,11 @@ public class CartService {
         return existingCartItem.getId();
     }
 
-    public ReCartDto reCart(User user, ReCartDto reCartDto) {
+    public PayResponseDto reCart(User user, ReCartDto reCartDto) {
+        Restaurant restaurant = restaurantRepository.findById(reCartDto.getRestaurantId())
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 restaurant ID입니다."));
         for (CartMenuDto menuDto : reCartDto.getMenuDtoList()) {
-            Menu menu = menuRepository.findByMenuName(menuDto.getMenu());
+            Menu menu = menuRepository.findByMenuNameAndRestaurantId(menuDto.getMenu(), reCartDto.getRestaurantId());
 
             Cart cart = Cart.builder()
                     .user(user)
@@ -133,8 +136,15 @@ public class CartService {
                     .count(menuDto.getCount())
                     .build();
             cartRepository.save(cart);
-            reCartDto.setRestaurantName(cart.getRestaurant().getRestaurantName());
         }
-        return reCartDto;
+
+        PayResponseDto payResponseDto = new PayResponseDto();
+        payResponseDto.setAmount(reCartDto.getTotal());
+        payResponseDto.setName(restaurant.getRestaurantName());
+        payResponseDto.setBuyer_name(user.getUserName());
+        payResponseDto.setBuyer_email(user.getUserEmail());
+        payResponseDto.setBuyer_tel(user.getUserPhone());
+
+        return payResponseDto;
     }
 }

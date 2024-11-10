@@ -5,6 +5,7 @@ import com.order.dto.PayResponseDto;
 import com.order.dto.ReCartDto;
 import com.order.entity.Cart;
 import com.order.entity.User;
+import com.order.repository.RestaurantRepository;
 import com.order.service.CartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import java.util.List;
 @RequestMapping("/cart")
 public class CartController {
     private final CartService cartService;
+    private final RestaurantRepository restaurantRepository;
+
     @PostMapping("/{id}")
     public ResponseEntity<?> addToCart(@AuthUser User user, @PathVariable("id") Long restaurantId, @RequestParam(value = "menuId") Long menuId) {
         long cartItem = cartService.addTOCart(user.getId(), restaurantId, menuId);
@@ -64,13 +67,8 @@ public class CartController {
 
     @PostMapping("/re")
     public ResponseEntity<?> makeCart(@AuthUser User user, @RequestPart("Data")ReCartDto reCartDto) {
-        ReCartDto reCart = cartService.reCart(user, reCartDto);
-        PayResponseDto payResponseDto = new PayResponseDto();
-        payResponseDto.setAmount(reCart.getTotal());
-        payResponseDto.setName(reCart.getRestaurantName());
-        payResponseDto.setBuyer_name(user.getUserName());
-        payResponseDto.setBuyer_email(user.getUserEmail());
-        payResponseDto.setBuyer_tel(user.getUserPhone());
+        PayResponseDto payResponseDto = cartService.reCart(user, reCartDto);
+
         return ResponseEntity.ok(payResponseDto);
     }
 }
