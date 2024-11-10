@@ -66,7 +66,7 @@ public class CartController {
     }
 
     @PostMapping("/re")
-    public ResponseEntity<?> makeCart(@AuthUser User user, @RequestPart("Data")ReCartDto reCartDto) {
+    public ResponseEntity<?> makeCart(@AuthUser User user, @RequestPart("data")ReCartDto reCartDto) {
         PayResponseDto payResponseDto = cartService.reCart(user, reCartDto);
 
         return ResponseEntity.ok(payResponseDto);
