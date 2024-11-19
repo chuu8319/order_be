@@ -32,4 +32,23 @@ public class UserService {
 
         return savedUser.getId();
     }
+
+    public long updateUser(User user, JoinDto joinDto) {
+        if(!userRepository.existsByUserId(user.getUserId())) {
+            return -1;
+        }
+        user.setUserPassword(joinDto.getUserPassword());
+        user.setUserEmail(joinDto.getUserEmail());
+
+        User savedUser = userRepository.save(user);
+        return savedUser.getId();
+    }
+
+    public long deleteUser(User user) {
+        if(!userRepository.existsByUserId(user.getUserId())) {
+            return -1;
+        }
+        userRepository.deleteById(user.getId());
+        return user.getId();
+    }
 }
