@@ -9,6 +9,8 @@ import org.hibernate.sql.results.internal.ResolvedSqlSelection;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 public class UserController {
@@ -39,5 +41,10 @@ public class UserController {
             return ResponseEntity.badRequest().body("존재하지 않는 회원입니다.");
         }
         return ResponseEntity.ok(id);
+    }
+
+    @GetMapping("/search")
+    private ResponseEntity<?> searchUser(@AuthUser User user) {
+        List<?> response = userService.searchUser(user);
     }
 }

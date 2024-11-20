@@ -5,23 +5,29 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "chat")
+@Table(name = "chat_message")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Chat {
+public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private User owner;
+    @JoinColumn(name = "chat_id", referencedColumnName = "id")
+    private Chat chat;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private User customer;
+    @JoinColumn(name = "sender_id", referencedColumnName = "id")
+    private User sender;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "date")
+    private String date;
 }

@@ -1,21 +1,40 @@
 package com.order.controller;
 
-import com.order.dto.ChatMessage;
+import com.order.common.AuthUser;
+import com.order.entity.ChatMessage;
+import com.order.entity.User;
+import com.order.service.ChatService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
-@Controller
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@AllArgsConstructor
 public class ChatController {
-
-    // 클라이언트에서 메시지를 수신하고, 해당 메시지를 /sub/chat 경로로 발행
-    @MessageMapping("/socket") // 클라이언트가 /pub/chat에 메시지를 발행하면 이 메소드가 실행
-    @SendTo("/sub/chat") // 해당 메시지를 /sub/chat 경로를 구독하는 모든 클라이언트에게 전송
-    public ChatMessage sendMessage(ChatMessage message) throws Exception {
-        return message; // 받은 메시지를 그대로 전송
+    private final ChatService chatService;
+    @PostMapping("/start/{id}")
+    public ResponseEntity<?> startChat(@AuthUser User user, @PathVariable(value = "id") Long id) {
+        Long chatId = chatService.startChat(user, id);
+        return ResponseEntity.ok(chatId);
     }
 
-    @
+    @PostMapping("/chat/{id}")
+    public ResponseEntity<?> messageChat(@AuthUser User user, @PathVariable(value = "id")Long id, @RequestBody Map<String, String> request) {
+        String content = request.get("content");
+        Long chatId = chatService.messageChat(user, id, content);
+        return ResponseEntity.ok(chatId);
+    }
 
+    @GetMapping("/chat/{id}")
+    public ResponseEntity<?> chat(@AuthUser User user, @PathVariable(value = "id") Long id) {
+        List<ChatMessage> chatMessages = chatService.chat(user, id);
+        return ResponseEntity.ok(chatMessages);
+    }
 }

@@ -1,12 +1,21 @@
 package com.order.service;
 
 import com.order.dto.JoinDto;
+import com.order.entity.Pay;
+import com.order.entity.PayMenu;
+import com.order.entity.Restaurant;
 import com.order.entity.User;
+import com.order.repository.PayRepository;
+import com.order.repository.RestaurantRepository;
 import com.order.repository.UserRepository;
+import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -14,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RestaurantRepository restaurantRepository;
+    private final PayRepository payRepository;
 
     public long joinUser(JoinDto joinDto) {
         if(userRepository.existsByUserId(joinDto.getUserId())) {
@@ -50,5 +61,14 @@ public class UserService {
         }
         userRepository.deleteById(user.getId());
         return user.getId();
+    }
+
+    public List<?> searchUser(User user) {
+        if(Objects.equals(user.getUserType(), "owner")) {
+            return restaurantRepository.findByUser(user);
+        }
+        else {
+            return null;
+        }
     }
 }
