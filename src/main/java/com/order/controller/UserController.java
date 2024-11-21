@@ -42,9 +42,4 @@ public class UserController {
         }
         return ResponseEntity.ok(id);
     }
-
-    @GetMapping("/search")
-    private ResponseEntity<?> searchUser(@AuthUser User user) {
-        List<?> response = userService.searchUser(user);
-    }
 }

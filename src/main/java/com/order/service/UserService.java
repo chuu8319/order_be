@@ -24,7 +24,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RestaurantRepository restaurantRepository;
-    private final PayRepository payRepository;
 
     public long joinUser(JoinDto joinDto) {
         if(userRepository.existsByUserId(joinDto.getUserId())) {
