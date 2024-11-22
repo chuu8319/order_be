@@ -18,19 +18,19 @@ public class Pay {
     private Long id;
 
     @Column(name = "imp_uid")
-    String impUid;
+    private String impUid;
 
     @Column(name = "merchant_uid")
-    String merchantUid;
+    private String merchantUid;
 
     @Column(name = "amount")
-    String amount;
+    private String amount;
 
     @Column(name = "status")
-    String status;
+    private String status;
 
     @Column(name = "created_at")
-    String createdAt;
+    private String createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

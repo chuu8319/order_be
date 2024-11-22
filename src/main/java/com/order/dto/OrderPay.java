@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewResponseDto {
-    private String reviewContents;
-    private int rating;
+public class OrderPay {
     private String userName;
-    private boolean isUser;
-    private Long reviewId;
+    private String timeStamp;
+    private String amount;
+    private List<OrderMenuDto> menuList;
 }

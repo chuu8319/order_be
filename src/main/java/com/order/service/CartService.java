@@ -1,5 +1,8 @@
 package com.order.service;
 
+import com.order.dto.CartMenuDto;
+import com.order.dto.PayResponseDto;
+import com.order.dto.ReCartDto;
 import com.order.entity.Cart;
 import com.order.entity.Menu;
 import com.order.entity.Restaurant;
@@ -117,5 +120,31 @@ public class CartService {
         }
         cartRepository.deleteById(existingCartItem.getId());
         return existingCartItem.getId();
+    }
+
+    public PayResponseDto reCart(User user, ReCartDto reCartDto) {
+        Restaurant restaurant = restaurantRepository.findById(reCartDto.getRestaurantId())
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 restaurant ID입니다."));
+        for (CartMenuDto menuDto : reCartDto.getMenuDtoList()) {
+            Menu menu = menuRepository.findByMenuNameAndRestaurantId(menuDto.getMenu(), reCartDto.getRestaurantId());
+
+            Cart cart = Cart.builder()
+                    .user(user)
+                    .restaurant(menu.getRestaurant())
+                    .menu(menu)
+                    .price(menuDto.getPrice()* menuDto.getCount())
+                    .count(menuDto.getCount())
+                    .build();
+            cartRepository.save(cart);
+        }
+
+        PayResponseDto payResponseDto = new PayResponseDto();
+        payResponseDto.setAmount(reCartDto.getTotal());
+        payResponseDto.setName(restaurant.getRestaurantName());
+        payResponseDto.setBuyer_name(user.getUserName());
+        payResponseDto.setBuyer_email(user.getUserEmail());
+        payResponseDto.setBuyer_tel(user.getUserPhone());
+
+        return payResponseDto;
     }
 }

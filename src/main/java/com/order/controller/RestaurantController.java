@@ -1,8 +1,10 @@
 package com.order.controller;
 
+import com.order.common.AuthUser;
 import com.order.dto.RestaurantDetailResponseDto;
 import com.order.dto.RestaurantDto;
 import com.order.dto.RestaurantResponseDto;
+import com.order.entity.User;
 import com.order.service.GeoCodingService;
 import com.order.service.RestaurantService;
 import lombok.AllArgsConstructor;
@@ -37,8 +39,8 @@ public class RestaurantController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRestaurantById(@PathVariable(value = "id") Long id) {
-        RestaurantDetailResponseDto restaurantDetailResponseDto = restaurantService.getRestaurantById(id);
+    public ResponseEntity<?> getRestaurantById(@AuthUser User user, @PathVariable(value = "id") Long id) {
+        RestaurantDetailResponseDto restaurantDetailResponseDto = restaurantService.getRestaurantById(user, id);
 
         return ResponseEntity.ok(restaurantDetailResponseDto);
     }

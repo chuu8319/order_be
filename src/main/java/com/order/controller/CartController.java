@@ -1,8 +1,11 @@
 package com.order.controller;
 
 import com.order.common.AuthUser;
+import com.order.dto.PayResponseDto;
+import com.order.dto.ReCartDto;
 import com.order.entity.Cart;
 import com.order.entity.User;
+import com.order.repository.RestaurantRepository;
 import com.order.service.CartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,8 @@ import java.util.List;
 @RequestMapping("/cart")
 public class CartController {
     private final CartService cartService;
+    private final RestaurantRepository restaurantRepository;
+
     @PostMapping("/{id}")
     public ResponseEntity<?> addToCart(@AuthUser User user, @PathVariable("id") Long restaurantId, @RequestParam(value = "menuId") Long menuId) {
         long cartItem = cartService.addTOCart(user.getId(), restaurantId, menuId);
@@ -58,5 +63,12 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart is Empty");
         }
         return ResponseEntity.ok(cartItem);
+    }
+
+    @PostMapping("/re")
+    public ResponseEntity<?> makeCart(@AuthUser User user, @RequestPart("data")ReCartDto reCartDto) {
+        PayResponseDto payResponseDto = cartService.reCart(user, reCartDto);
+
+        return ResponseEntity.ok(payResponseDto);
     }
 }

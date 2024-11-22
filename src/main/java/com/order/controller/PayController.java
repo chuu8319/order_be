@@ -18,6 +18,7 @@ import java.io.IOException;
 @Slf4j
 public class PayController {
     private final PayService payService;
+
     @PostMapping("/verify/{impUid}")
     public IamportResponse<Payment> verifyPayment(@AuthUser User user, @PathVariable String impUid) throws IamportResponseException, IOException {
         return payService.verifyAndSavePayment(user, impUid);

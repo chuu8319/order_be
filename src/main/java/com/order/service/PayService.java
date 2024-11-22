@@ -59,6 +59,7 @@ public class PayService {
                 payMenu.setMenu(cartItem.getMenu());
                 payMenu.setCount(cartItem.getCount());
                 payMenu.setPay(payEntity);
+                payMenu.setRestaurant(cartItem.getRestaurant());
                 payMenuRepository.save(payMenu);
                 cartRepository.delete(cartItem);
             }
