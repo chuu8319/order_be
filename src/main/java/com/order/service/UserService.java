@@ -29,6 +29,7 @@ public class UserService {
     private final RestaurantRepository restaurantRepository;
     private final PayMenuRepository payMenuRepository;
     private final ChatRepository chatRepository;
+    private final PayRepository payRepository;
 
     public long joinUser(JoinDto joinDto) {
         if (userRepository.existsByUserId(joinDto.getUserId())) {
@@ -75,7 +76,7 @@ public class UserService {
         }
     }
 
-    public List<OrderDto> getOrder(User user) {
+    public List<OrderDto> getOwnerOrder(User user) {
         if (user.getUserType().equals("customer")) {
             throw new ResourceNotFoundException("owner만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
@@ -116,6 +117,35 @@ public class UserService {
             orderDtoList.add(orderDto);
         });
 
+        return orderDtoList;
+    }
+
+    public List<OrderDto> getCustomerOrder(User user) {
+        if (user.getUserType().equals("owner")) {
+            throw new ResourceNotFoundException("customer만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
+        }
+        List<Pay> payList = payRepository.findByUser(user);
+        List<OrderDto> orderDtoList = new ArrayList<>();
+        payList.forEach(pay -> {
+            OrderDto orderDto = new OrderDto();
+            orderDto.setUser(user.getUserId());
+            orderDto.setAmount(pay.getAmount());
+            orderDto.setTimeStamp(pay.getCreatedAt());
+            List<PayMenu> payMenuList = payMenuRepository.findByPay(pay);
+            List<OrderMenuDto> orderMenuDtoList = new ArrayList<>();
+            payMenuList.forEach(payMenu -> {
+                OrderMenuDto orderMenuDto = new OrderMenuDto();
+                if(orderDto.getRestaurant() == null || orderDto.getChat() == null) {
+                    orderDto.setRestaurant(payMenu.getRestaurant().getRestaurantName());
+                    orderDto.setChat(chatRepository.findByRestaurantAndCustomer(payMenu.getRestaurant(), user).getId());
+                }
+                orderMenuDto.setMenu(payMenu.getMenu().getMenuName());
+                orderMenuDto.setCount(payMenu.getCount());
+               orderMenuDtoList.add(orderMenuDto);
+            });
+            orderDto.setMenuList(orderMenuDtoList);
+            orderDtoList.add(orderDto);
+        });
         return orderDtoList;
     }
 }

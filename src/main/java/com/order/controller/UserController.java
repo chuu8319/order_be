@@ -44,9 +44,16 @@ public class UserController {
         return ResponseEntity.ok(id);
     }
 
-    @GetMapping("/order")
-    private ResponseEntity<?> getOrder(@AuthUser User user) {
-        List<OrderDto> orderDtoList = userService.getOrder(user);
+    @GetMapping("/order/owner")
+    private ResponseEntity<?> getOwnerOrder(@AuthUser User user) {
+        List<OrderDto> orderDtoList = userService.getOwnerOrder(user);
+
+        return ResponseEntity.ok(orderDtoList);
+    }
+
+    @GetMapping("/order/customer")
+    private ResponseEntity<?> getCustomerOrder(@AuthUser User user) {
+        List<OrderDto> orderDtoList = userService.getCustomerOrder(user);
 
         return ResponseEntity.ok(orderDtoList);
     }
