@@ -2,6 +2,7 @@ package com.order.controller;
 
 import com.order.common.AuthUser;
 import com.order.dto.JoinDto;
+import com.order.dto.OrderDto;
 import com.order.entity.User;
 import com.order.service.UserService;
 import lombok.AllArgsConstructor;
@@ -41,5 +42,12 @@ public class UserController {
             return ResponseEntity.badRequest().body("존재하지 않는 회원입니다.");
         }
         return ResponseEntity.ok(id);
+    }
+
+    @GetMapping("/order")
+    private ResponseEntity<?> getOrder(@AuthUser User user) {
+        List<OrderDto> orderDtoList = userService.getOrder(user);
+
+        return ResponseEntity.ok(orderDtoList);
     }
 }

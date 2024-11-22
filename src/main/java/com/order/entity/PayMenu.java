@@ -18,6 +18,10 @@ public class PayMenu {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
+    private Restaurant restaurant;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
     private Menu menu;
 

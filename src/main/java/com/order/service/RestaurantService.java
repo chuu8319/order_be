@@ -192,4 +192,5 @@ public class RestaurantService {
         restaurantRepository.delete(restaurant);
         reviewRepository.deleteByRestaurantId(restaurant.getId());
     }
+
 }

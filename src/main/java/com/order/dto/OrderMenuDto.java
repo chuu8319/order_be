@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatDto {
-    private Long id;
-    private Long chatId;
-    private String sender;
-    private String content;
-    private String date;
+public class OrderMenuDto {
+    private String menu;
+    private int count;
 }

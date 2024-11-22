@@ -43,5 +43,4 @@ public class AuthUserResolver implements HandlerMethodArgumentResolver {
 
         return user;
     }
-
 }

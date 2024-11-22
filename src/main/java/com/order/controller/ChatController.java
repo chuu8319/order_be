@@ -1,6 +1,7 @@
 package com.order.controller;
 
 import com.order.common.AuthUser;
+import com.order.dto.ChatDto;
 import com.order.entity.ChatMessage;
 import com.order.entity.User;
 import com.order.service.ChatService;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/chat")
 public class ChatController {
     private final ChatService chatService;
     @PostMapping("/start/{id}")
@@ -25,16 +27,16 @@ public class ChatController {
         return ResponseEntity.ok(chatId);
     }
 
-    @PostMapping("/chat/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<?> messageChat(@AuthUser User user, @PathVariable(value = "id")Long id, @RequestBody Map<String, String> request) {
         String content = request.get("content");
         Long chatId = chatService.messageChat(user, id, content);
         return ResponseEntity.ok(chatId);
     }
 
-    @GetMapping("/chat/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> chat(@AuthUser User user, @PathVariable(value = "id") Long id) {
-        List<ChatMessage> chatMessages = chatService.chat(user, id);
+        List<ChatDto> chatMessages = chatService.chat(user, id);
         return ResponseEntity.ok(chatMessages);
     }
 }

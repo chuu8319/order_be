@@ -1,5 +1,6 @@
 package com.order.service;
 
+import com.order.dto.ChatDto;
 import com.order.entity.Chat;
 import com.order.entity.ChatMessage;
 import com.order.entity.Restaurant;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,12 +39,13 @@ public class ChatService {
 
         User owner = restaurant.getUser();
 
-        Chat chat = chatRepository.findByOwnerAndCustomer(owner, customer);
-
+        //Chat chat = chatRepository.findByOwnerAndCustomer(owner, customer);
+        Chat chat = chatRepository.findByRestaurantAndCustomer(restaurant, customer);
         if (chat == null) {
             chat = Chat.builder()
                     .customer(customer)
                     .owner(owner)
+                    .restaurant(restaurant)
                     .build();
             chatRepository.save(chat);
         }
@@ -65,10 +69,22 @@ public class ChatService {
         return savedChat.getId();
     }
 
-    public List<ChatMessage> chat(User user, Long id) {
+    public List<ChatDto> chat(User user, Long id) {
         Chat chat = chatRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("채팅방이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-        return chatMessageRepository.findByChat(chat);
+        List<ChatMessage> chatMessageList = chatMessageRepository.findByChat(chat);
+
+        return chatMessageList.stream()
+                .map(chatMessage -> {
+                    ChatDto chatDto = new ChatDto();
+                    chatDto.setId(chatMessage.getId());
+                    chatDto.setChatId(chatMessage.getChat().getId());
+                    chatDto.setSender(chatMessage.getSender().getUserName());
+                    chatDto.setContent(chatMessage.getContent());
+                    chatDto.setDate(chatMessage.getDate());
+                    return chatDto;
+                })
+                .collect(Collectors.toList());
     }
 }
