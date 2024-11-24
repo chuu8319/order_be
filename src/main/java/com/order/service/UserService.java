@@ -9,11 +9,13 @@ import com.order.exception.ResourceNotFoundException;
 import com.order.repository.*;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -68,17 +71,9 @@ public class UserService {
         return user.getId();
     }
 
-    public List<?> searchUser(User user) {
-        if (Objects.equals(user.getUserType(), "owner")) {
-            return restaurantRepository.findByUser(user);
-        } else {
-            return null;
-        }
-    }
-
     public List<OrderDto> getOwnerOrder(User user) {
-        if (user.getUserType().equals("customer")) {
-            throw new ResourceNotFoundException("owner만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
+        if (user.getUserType().equals("Customer")) {
+            throw new ResourceNotFoundException("Owner만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
         List<Restaurant> restaurants = restaurantRepository.findByUser(user);
@@ -121,8 +116,8 @@ public class UserService {
     }
 
     public List<OrderDto> getCustomerOrder(User user) {
-        if (user.getUserType().equals("owner")) {
-            throw new ResourceNotFoundException("customer만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
+        if (user.getUserType().equals("Owner")) {
+            throw new ResourceNotFoundException("Customer만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
         List<Pay> payList = payRepository.findByUser(user);
         List<OrderDto> orderDtoList = new ArrayList<>();
@@ -135,6 +130,9 @@ public class UserService {
             List<OrderMenuDto> orderMenuDtoList = new ArrayList<>();
             payMenuList.forEach(payMenu -> {
                 OrderMenuDto orderMenuDto = new OrderMenuDto();
+                System.out.println("===============");
+                System.out.println(payMenu.getRestaurant().getId());
+                System.out.println(user.getId());
                 if(orderDto.getRestaurant() == null || orderDto.getChat() == null) {
                     orderDto.setRestaurant(payMenu.getRestaurant().getRestaurantName());
                     orderDto.setChat(chatRepository.findByRestaurantAndCustomer(payMenu.getRestaurant(), user).getId());
@@ -147,5 +145,9 @@ public class UserService {
             orderDtoList.add(orderDto);
         });
         return orderDtoList;
+    }
+
+    public String getName(User user) {
+        return user.getUserName();
     }
 }

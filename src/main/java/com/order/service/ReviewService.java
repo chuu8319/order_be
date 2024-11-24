@@ -37,8 +37,8 @@ public class ReviewService {
     }
 
     public List<ReviewDto> getAllByUser(User user) {
-        if(user.getUserType().equals("owner")) {
-            throw new ResourceNotFoundException("owner는 review 검색을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        if(user.getUserType().equals("Owner")) {
+            throw new ResourceNotFoundException("Owner는 review 검색을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
         List<Review> reviews = reviewRepository.findByUserId(user.getId());
         if (reviews == null || reviews.isEmpty()) {

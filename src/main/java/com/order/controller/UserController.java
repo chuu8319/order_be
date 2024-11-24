@@ -57,4 +57,11 @@ public class UserController {
 
         return ResponseEntity.ok(orderDtoList);
     }
+
+    @GetMapping("/order/name")
+    private ResponseEntity<?> getName(@AuthUser User user) {
+        String name = userService.getName(user);
+
+        return ResponseEntity.ok(name);
+    }
 }
