@@ -128,7 +128,7 @@ public class UserService {
         List<OrderDto> orderDtoList = new ArrayList<>();
         payList.forEach(pay -> {
             OrderDto orderDto = new OrderDto();
-            orderDto.setUser(user.getUserId());
+            orderDto.setUser(user.getUserName());
             orderDto.setAmount(pay.getAmount());
             orderDto.setTimeStamp(pay.getCreatedAt());
             List<PayMenu> payMenuList = payMenuRepository.findByPay(pay);
