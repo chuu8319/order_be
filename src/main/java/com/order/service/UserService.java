@@ -56,8 +56,11 @@ public class UserService {
         if (!userRepository.existsByUserId(user.getUserId())) {
             return -1;
         }
-        user.setUserPassword(bCryptPasswordEncoder.encode(joinDto.getUserPassword()));
-        user.setUserEmail(joinDto.getUserEmail());
+        if(joinDto.getUserPassword() != null) {
+            user.setUserPassword(bCryptPasswordEncoder.encode(joinDto.getUserPassword()));
+        } else if (joinDto.getUserEmail() != null) {
+            user.setUserEmail(joinDto.getUserEmail());
+        }
 
         User savedUser = userRepository.save(user);
         return savedUser.getId();
