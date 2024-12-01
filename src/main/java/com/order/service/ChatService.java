@@ -80,7 +80,8 @@ public class ChatService {
                     ChatDto chatDto = new ChatDto();
                     chatDto.setId(chatMessage.getId());
                     chatDto.setChatId(chatMessage.getChat().getId());
-                    chatDto.setSender(chatMessage.getSender().getUserName());
+                    chatDto.setSender(chatMessage.getSender().getUserId());
+                    chatDto.setIsUser(chatMessage.getSender() == user);
                     chatDto.setContent(chatMessage.getContent());
                     chatDto.setDate(chatMessage.getDate());
                     return chatDto;

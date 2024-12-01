@@ -13,4 +13,5 @@ public class ChatDto {
     private String sender;
     private String content;
     private String date;
+    private Boolean isUser;
 }

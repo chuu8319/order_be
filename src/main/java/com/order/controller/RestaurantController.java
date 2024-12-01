@@ -46,8 +46,8 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createRestaurant(@RequestPart(value = "data") RestaurantDto restaurantDto, @RequestPart(value = "file", required = false) MultipartFile file) {
-        RestaurantDto restaurant = restaurantService.createRestaurant(restaurantDto, file);
+    public ResponseEntity<?> createRestaurant(@AuthUser User user, @RequestPart(value = "data") RestaurantDto restaurantDto, @RequestPart(value = "file", required = false) MultipartFile file) {
+        RestaurantDto restaurant = restaurantService.createRestaurant(restaurantDto, file, user);
         String address = geoCodingService.getCoordinates(restaurant.getId());
         return new ResponseEntity<>(restaurant + address, HttpStatus.CREATED);
     }

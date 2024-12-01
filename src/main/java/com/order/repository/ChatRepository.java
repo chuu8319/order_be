@@ -4,12 +4,13 @@ import com.order.entity.Chat;
 import com.order.entity.Restaurant;
 import com.order.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     boolean existsByOwnerAndCustomer(User owner, User customer);
     Chat findByOwnerAndCustomer(User owner, User customer);
 
     Chat findByRestaurantAndCustomer(Restaurant restaurant, User customer);
+
 }

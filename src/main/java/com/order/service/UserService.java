@@ -9,11 +9,13 @@ import com.order.exception.ResourceNotFoundException;
 import com.order.repository.*;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +25,14 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RestaurantRepository restaurantRepository;
     private final PayMenuRepository payMenuRepository;
     private final ChatRepository chatRepository;
+    private final PayRepository payRepository;
 
     public long joinUser(JoinDto joinDto) {
         if (userRepository.existsByUserId(joinDto.getUserId())) {
@@ -52,8 +56,11 @@ public class UserService {
         if (!userRepository.existsByUserId(user.getUserId())) {
             return -1;
         }
-        user.setUserPassword(bCryptPasswordEncoder.encode(joinDto.getUserPassword()));
-        user.setUserEmail(joinDto.getUserEmail());
+        if(joinDto.getUserPassword() != null) {
+            user.setUserPassword(bCryptPasswordEncoder.encode(joinDto.getUserPassword()));
+        } else if (joinDto.getUserEmail() != null) {
+            user.setUserEmail(joinDto.getUserEmail());
+        }
 
         User savedUser = userRepository.save(user);
         return savedUser.getId();
@@ -67,17 +74,9 @@ public class UserService {
         return user.getId();
     }
 
-    public List<?> searchUser(User user) {
-        if (Objects.equals(user.getUserType(), "owner")) {
-            return restaurantRepository.findByUser(user);
-        } else {
-            return null;
-        }
-    }
-
-    public List<OrderDto> getOrder(User user) {
-        if (user.getUserType().equals("customer")) {
-            throw new ResourceNotFoundException("owner만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
+    public List<OrderDto> getOwnerOrder(User user) {
+        if (user.getUserType().equals("Customer")) {
+            throw new ResourceNotFoundException("Owner만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
         List<Restaurant> restaurants = restaurantRepository.findByUser(user);
@@ -117,5 +116,41 @@ public class UserService {
         });
 
         return orderDtoList;
+    }
+
+    public List<OrderDto> getCustomerOrder(User user) {
+        if (user.getUserType().equals("Owner")) {
+            throw new ResourceNotFoundException("Customer만 조회할 수 있습니다.", HttpStatus.BAD_REQUEST);
+        }
+        List<Pay> payList = payRepository.findByUser(user);
+        List<OrderDto> orderDtoList = new ArrayList<>();
+        payList.forEach(pay -> {
+            OrderDto orderDto = new OrderDto();
+            orderDto.setUser(user.getUserName());
+            orderDto.setAmount(pay.getAmount());
+            orderDto.setTimeStamp(pay.getCreatedAt());
+            List<PayMenu> payMenuList = payMenuRepository.findByPay(pay);
+            List<OrderMenuDto> orderMenuDtoList = new ArrayList<>();
+            payMenuList.forEach(payMenu -> {
+                OrderMenuDto orderMenuDto = new OrderMenuDto();
+                System.out.println("===============");
+                System.out.println(payMenu.getRestaurant().getId());
+                System.out.println(user.getId());
+                if(orderDto.getRestaurant() == null || orderDto.getChat() == null) {
+                    orderDto.setRestaurant(payMenu.getRestaurant().getRestaurantName());
+                    orderDto.setChat(chatRepository.findByRestaurantAndCustomer(payMenu.getRestaurant(), user).getId());
+                }
+                orderMenuDto.setMenu(payMenu.getMenu().getMenuName());
+                orderMenuDto.setCount(payMenu.getCount());
+               orderMenuDtoList.add(orderMenuDto);
+            });
+            orderDto.setMenuList(orderMenuDtoList);
+            orderDtoList.add(orderDto);
+        });
+        return orderDtoList;
+    }
+
+    public String getName(User user) {
+        return user.getUserName();
     }
 }

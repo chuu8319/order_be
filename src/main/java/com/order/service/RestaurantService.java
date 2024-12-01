@@ -144,8 +144,13 @@ public class RestaurantService {
         return restaurantDetailResponseDto;
     }
 
-    public RestaurantDto createRestaurant(RestaurantDto restaurantDto, MultipartFile file) {
-        Restaurant restaurant = restaurantDto.toEntity();
+    public RestaurantDto createRestaurant(RestaurantDto restaurantDto, MultipartFile file, User user) {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantAddress(restaurantDto.getRestaurantAddress());
+        restaurant.setRestaurantCategory(restaurantDto.getRestaurantCategory());
+        restaurant.setRestaurantPhone(restaurantDto.getRestaurantPhone());
+        restaurant.setRestaurantName(restaurantDto.getRestaurantName());
+        restaurant.setUser(user);
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
 
         if(file != null) {
@@ -157,7 +162,7 @@ public class RestaurantService {
 
         restaurantRepository.save(savedRestaurant);
 
-        geoCodingService.getCoordinates(savedRestaurant.getId());
+//        geoCodingService.getCoordinates(savedRestaurant.getId());
 
         return savedRestaurant.toDto();
     }
